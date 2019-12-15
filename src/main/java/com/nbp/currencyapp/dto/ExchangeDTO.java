@@ -1,4 +1,4 @@
-package com.nbp.currencyapp.dao;
+package com.nbp.currencyapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ExchangeDAO {
+public class ExchangeDTO {
 
     private BigDecimal amount;
     private String baseCurrencyCode;

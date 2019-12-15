@@ -1,7 +1,7 @@
-package com.nbp.currencyapp.domain;
+package com.nbp.currencyapp.dataloader;
 
 public enum NbpTableType {
     A,
     B,
     C
-};
+}
