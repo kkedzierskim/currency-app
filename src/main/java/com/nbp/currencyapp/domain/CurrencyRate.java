@@ -18,6 +18,6 @@ public class CurrencyRate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String currency;
-    private String ISOcode;
+    private String code;
     private BigDecimal exchange;
 }

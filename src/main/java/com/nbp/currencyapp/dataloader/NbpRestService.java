@@ -1,7 +1,10 @@
 package com.nbp.currencyapp.dataloader;
 
+import com.nbp.currencyapp.converter.RateDTOtoCurrencyRate;
+import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.RateDTO;
 import com.nbp.currencyapp.dto.RatesTableDTO;
+import com.nbp.currencyapp.repository.CurrencyRateRepository;
 import com.nbp.currencyapp.service.MyHttpRequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,15 +22,17 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class RatesDataLoader {
+public class NbpRestService {
 
     private final MyHttpRequestService myHttpRequestService;
-    private List<RateDTO> rateDTOs = new ArrayList<>();
-    private LocalDateTime lastUpdate;
+    private final RateDTOtoCurrencyRate rateDTOtoCurrencyRate;
+    private final CurrencyRateRepository currencyRateRepository;
     private static final String URL = "http://api.nbp.pl/api/exchangerates/tables/";
 
-    public RatesDataLoader(MyHttpRequestService myHttpRequestService) {
+    public NbpRestService(MyHttpRequestService myHttpRequestService, RateDTOtoCurrencyRate rateDTOtoCurrencyRate, CurrencyRateRepository currencyRateRepository) {
         this.myHttpRequestService = myHttpRequestService;
+        this.rateDTOtoCurrencyRate = rateDTOtoCurrencyRate;
+        this.currencyRateRepository = currencyRateRepository;
     }
 
     @PostConstruct
@@ -48,25 +53,18 @@ public class RatesDataLoader {
             throw new IllegalStateException("NBP convert rates api unavailable");
         }
 
+        List<RateDTO> rateDTOs = new ArrayList<>();
         List<RatesTableDTO> ratesTableDTOs = rateResponse.getBody();
         if (!CollectionUtils.isEmpty(ratesTableDTOs)) {
             rateDTOs.addAll(ratesTableDTOs.get(0).getRates());
         }
-        lastUpdate = LocalDateTime.now();
+
+         rateDTOs.stream()
+                .map(rateDTOtoCurrencyRate::convert)
+                 .forEach(currencyRateRepository::save);
+        
         myHttpRequestService.saveRequest(URL + tableType.toString(), LocalDateTime.now(), "GET");
     }
 
-    private boolean reloadRatesIfNeeded() {
-        return lastUpdate != null && LocalDateTime.now().isBefore(lastUpdate.plusDays(1));
-    }
-
-    public List<RateDTO> getRateDTOs() {
-        if (!reloadRatesIfNeeded()) {
-            rateDTOs.clear();
-            log.info("Reloading currency rates");
-            loadExchangeRates();
-        }
-        return rateDTOs;
-    }
 }
 

@@ -1,8 +1,9 @@
 package com.nbp.currencyapp.service;
 
-import com.nbp.currencyapp.dataloader.RatesDataLoader;
+import com.nbp.currencyapp.dataloader.NbpRestService;
+import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.ExchangeDTO;
-import com.nbp.currencyapp.dto.RateDTO;
+import com.nbp.currencyapp.repository.CurrencyRateRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,49 +17,44 @@ import java.util.Optional;
 @Service
 public class CurrencyService {
 
-   private RatesDataLoader ratesDataLoader;
+    private CurrencyRateRepository currencyRateRepository;
 
-    public CurrencyService(RatesDataLoader ratesDataLoader) {
-        this.ratesDataLoader = ratesDataLoader;
+    public CurrencyService(NbpRestService nbpRestService, CurrencyRateRepository currencyRateRepository) {
+        this.currencyRateRepository = currencyRateRepository;
     }
 
-    public List<RateDTO> getAllRates() {
-       return ratesDataLoader.getRateDTOs();
+    public List<CurrencyRate> getAllCurrencyRates() {
+        return currencyRateRepository.findAll();
     }
 
 
     public ExchangeDTO convert(BigDecimal amount, String baseCurrencyCode, String targetCurrencyCode) {
 
-        BigDecimal currencyValue = findCurrencyMid(targetCurrencyCode).divide(findCurrencyMid(baseCurrencyCode), RoundingMode.CEILING);
+        BigDecimal currencyValue = findCurrencyExchange(targetCurrencyCode).divide(findCurrencyExchange(baseCurrencyCode), RoundingMode.CEILING);
         BigDecimal convertedAmount = currencyValue.multiply(amount);
 
         return new ExchangeDTO(amount, baseCurrencyCode, targetCurrencyCode, convertedAmount);
     }
 
-    private BigDecimal findCurrencyMid(String currencyCode) {
-        Optional<BigDecimal> currencyMidOptional = getAllRates().stream()
-                .filter(currency -> currency.getCode().equals(currencyCode))
-                .findFirst()
-                .map(RateDTO::getMid);
+    private BigDecimal findCurrencyExchange(String currencyCode) {
 
-        if (currencyMidOptional.isPresent()) {
-            return currencyMidOptional.get();
+        Optional<CurrencyRate> currencyRateOptional = currencyRateRepository.findByCode(currencyCode);
+        if (currencyRateOptional.isPresent()) {
+            return currencyRateOptional.get().getExchange();
         } else throw new NoSuchElementException();
     }
 
-    private RateDTO findCurrencyIsoCode(RateDTO userRateDTO) {
-        Optional<RateDTO> rateDTOOptional = getAllRates().stream()
-                .filter(currency -> currency.getCode().equals(userRateDTO.getCode()))
-                .findFirst();
 
-        if (rateDTOOptional.isPresent()) {
-            return rateDTOOptional.get();
+    private CurrencyRate findCurrencyIsoCode(CurrencyRate userCurrencyRate) {
+        Optional<CurrencyRate> currencyRateOptional = currencyRateRepository.findByCode(userCurrencyRate.getCode());
+        if (currencyRateOptional.isPresent()) {
+            return currencyRateOptional.get();
         } else throw new NoSuchElementException();
     }
 
-    public List<RateDTO> getListRates(List<RateDTO> userRateDTOList){
-        List<RateDTO> resultList = new ArrayList<>();
-        userRateDTOList.forEach(rateDTO -> resultList.add(findCurrencyIsoCode(rateDTO)));
+    public List<CurrencyRate> getUserRateList(List<CurrencyRate> userCurrencyList) {
+        List<CurrencyRate> resultList = new ArrayList<>();
+        userCurrencyList.forEach(currencyRate -> resultList.add(findCurrencyIsoCode(currencyRate)));
         return resultList;
     }
 

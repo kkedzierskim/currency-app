@@ -20,7 +20,7 @@ public class CurrencyController {
     }
     @GetMapping("/currencies")
     public List<RateDTO> getCurrencies(){
-        return currencyService.getAllRates();
+        return currencyService.getAllCurrencyRates();
     }
 
     @GetMapping("/currency/convert")
@@ -33,7 +33,7 @@ public class CurrencyController {
 
     @GetMapping("/currencies/list")
     public List<RateDTO> getCurrenciesList(@RequestBody List<RateDTO> userRateDTO){
-        return currencyService.getListRates(userRateDTO);
+        return currencyService.getUserRateList(userRateDTO);
     }
 
     @ExceptionHandler(NumberFormatException.class)
