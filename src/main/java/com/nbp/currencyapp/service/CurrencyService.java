@@ -39,7 +39,7 @@ public class CurrencyService {
         Optional<BigDecimal> currencyMidOptional = getAllRates().stream()
                 .filter(currency -> currency.getCode().equals(currencyCode))
                 .findFirst()
-                .map(currency -> BigDecimal.valueOf(currency.getMid()));
+                .map(RateDTO::getMid);
 
         if (currencyMidOptional.isPresent()) {
             return currencyMidOptional.get();
