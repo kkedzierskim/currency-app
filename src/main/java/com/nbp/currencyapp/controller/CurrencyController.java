@@ -1,5 +1,6 @@
 package com.nbp.currencyapp.controller;
 
+import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.ExchangeDTO;
 import com.nbp.currencyapp.dto.RateDTO;
 import com.nbp.currencyapp.service.CurrencyService;
@@ -19,7 +20,7 @@ public class CurrencyController {
         this.currencyService = currencyService;
     }
     @GetMapping("/currencies")
-    public List<RateDTO> getCurrencies(){
+    public List<CurrencyRate> getCurrencies(){
         return currencyService.getAllCurrencyRates();
     }
 
