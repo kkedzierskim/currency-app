@@ -2,7 +2,7 @@ package com.nbp.currencyapp.controller;
 
 import com.nbp.currencyapp.dto.ExchangeDTO;
 import com.nbp.currencyapp.dto.RateDTO;
-import com.nbp.currencyapp.service.CurrenciesService;
+import com.nbp.currencyapp.service.CurrencyService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 
@@ -13,14 +13,14 @@ import java.util.NoSuchElementException;
 @RestController
 public class CurrencyController {
 
-    private final CurrenciesService currenciesService;
+    private final CurrencyService currencyService;
 
-    public CurrencyController( CurrenciesService currenciesService) {
-        this.currenciesService = currenciesService;
+    public CurrencyController(CurrencyService currencyService) {
+        this.currencyService = currencyService;
     }
     @GetMapping("/currencies")
     public List<RateDTO> getCurrencies(){
-        return currenciesService.getAllRates();
+        return currencyService.getAllRates();
     }
 
     @GetMapping("/currency/convert")
@@ -28,12 +28,12 @@ public class CurrencyController {
             @RequestParam(name = "amount") BigDecimal amount,
             @RequestParam(name = "baseCurrency") String baseCurrency,
             @RequestParam(name = "targetCurrency") String targetCurrency) {
-        return currenciesService.convert(amount, baseCurrency, targetCurrency);
+        return currencyService.convert(amount, baseCurrency, targetCurrency);
     }
 
     @GetMapping("/currencies/list")
     public List<RateDTO> getCurrenciesList(@RequestBody List<RateDTO> userRateDTO){
-        return currenciesService.getListRates(userRateDTO);
+        return currencyService.getListRates(userRateDTO);
     }
 
     @ExceptionHandler(NumberFormatException.class)

@@ -39,6 +39,7 @@ public class RatesDataLoader {
     private void loadExchangeRatesTable(NbpTableType tableType) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<List<RatesTableDTO>> rateResponse;
+
         try {
             rateResponse = restTemplate.exchange( URL + tableType.toString(),
                     HttpMethod.GET, null, new ParameterizedTypeReference<List<RatesTableDTO>>() {
@@ -61,6 +62,7 @@ public class RatesDataLoader {
 
     public List<RateDTO> getRateDTOs() {
         if (!reloadRatesIfNeeded()) {
+            rateDTOs.clear();
             log.info("Reloading currency rates");
             loadExchangeRates();
         }

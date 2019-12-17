@@ -14,11 +14,11 @@ import java.util.Optional;
 
 
 @Service
-public class CurrenciesService {
+public class CurrencyService {
 
    private RatesDataLoader ratesDataLoader;
 
-    public CurrenciesService(RatesDataLoader ratesDataLoader) {
+    public CurrencyService(RatesDataLoader ratesDataLoader) {
         this.ratesDataLoader = ratesDataLoader;
     }
 
