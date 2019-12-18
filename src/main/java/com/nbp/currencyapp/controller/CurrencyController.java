@@ -2,7 +2,6 @@ package com.nbp.currencyapp.controller;
 
 import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.ExchangeDTO;
-import com.nbp.currencyapp.dto.RateDTO;
 import com.nbp.currencyapp.service.CurrencyService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
@@ -33,8 +32,8 @@ public class CurrencyController {
     }
 
     @GetMapping("/currencies/list")
-    public List<RateDTO> getCurrenciesList(@RequestBody List<RateDTO> userRateDTO){
-        return currencyService.getUserRateList(userRateDTO);
+    public List<CurrencyRate> getCurrenciesList(@RequestBody List<CurrencyRate> userCurrencyList){
+        return currencyService.getUserRateList(userCurrencyList);
     }
 
     @ExceptionHandler(NumberFormatException.class)
@@ -54,7 +53,7 @@ public class CurrencyController {
 
     @ExceptionHandler(NoSuchElementException.class)
     public String noSuchElementExceptionHandler() {
-        return "Given currency ISOcode does not exsist";
+        return "Given currency ISOcode does not exsist check list of available currencies";
     }
 
 

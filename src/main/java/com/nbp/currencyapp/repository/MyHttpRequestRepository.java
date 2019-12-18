@@ -1,9 +1,9 @@
 package com.nbp.currencyapp.repository;
 
-import com.nbp.currencyapp.domain.MyHttpRequest;
+import com.nbp.currencyapp.domain.MyHttpRequestLoger;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface MyHttpRequestRepository extends JpaRepository<MyHttpRequest, Long> {
+public interface MyHttpRequestRepository extends JpaRepository<MyHttpRequestLoger, Long> {
 
 }

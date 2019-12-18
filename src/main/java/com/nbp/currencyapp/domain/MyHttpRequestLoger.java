@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MyHttpRequest {
+public class MyHttpRequestLoger {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

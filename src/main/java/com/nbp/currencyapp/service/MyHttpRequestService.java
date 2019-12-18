@@ -1,6 +1,6 @@
 package com.nbp.currencyapp.service;
 
-import com.nbp.currencyapp.domain.MyHttpRequest;
+import com.nbp.currencyapp.domain.MyHttpRequestLoger;
 import com.nbp.currencyapp.repository.MyHttpRequestRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class MyHttpRequestService {
 
     public void saveRequest(String url, LocalDateTime requestDateTime, String requestMethod){
         myHttpRequestRepository.save(
-                MyHttpRequest.builder().requestDateTime(requestDateTime)
+                MyHttpRequestLoger.builder().requestDateTime(requestDateTime)
                 .requestMethod(requestMethod)
                 .url(url)
                 .build()
