@@ -31,10 +31,6 @@ public class CurrencyController {
         return currencyService.convert(amount, baseCurrency, targetCurrency);
     }
 
-    @GetMapping("/currencies/list")
-    public List<CurrencyRate> getCurrenciesList(@RequestBody List<CurrencyRate> userCurrencyList){
-        return currencyService.getUserRateList(userCurrencyList);
-    }
 
     @ExceptionHandler(NumberFormatException.class)
     public String numberFormatExceptionHandler() {
