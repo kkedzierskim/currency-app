@@ -60,6 +60,7 @@ public class CurrencyService {
         ratesTableDTOs.addAll(nbpRestService.loadExchangeRatesTable(NbpTableType.B));
 
         if (currencyRateRepository.findAll().isEmpty()) {
+            currencyRateRepository.save(new CurrencyRate("polski złoty", "PLN", BigDecimal.ONE));
             ratesTableDTOs.stream()
                     .map(RatesTableDTO::getRates)
                     .flatMap(List::stream)
