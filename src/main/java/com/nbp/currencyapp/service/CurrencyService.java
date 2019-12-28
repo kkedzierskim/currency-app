@@ -61,13 +61,13 @@ public class CurrencyService {
 
         if (currencyRateRepository.findAll().isEmpty()) {
             ratesTableDTOs.stream()
-                    .map(ratesTableDTO -> ratesTableDTO.getRates())
+                    .map(RatesTableDTO::getRates)
                     .flatMap(List::stream)
                     .map(rateDTOtoCurrencyRate::convert)
                     .forEach(currencyRateRepository::save);
         } else {
             ratesTableDTOs.stream()
-                    .map(ratesTableDTO -> ratesTableDTO.getRates())
+                    .map(RatesTableDTO::getRates)
                     .flatMap(List::stream)
                     .map(rateDTOtoCurrencyRate::convert)
                     .forEach(currencyRate -> {
