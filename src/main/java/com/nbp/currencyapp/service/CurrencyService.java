@@ -1,11 +1,13 @@
 package com.nbp.currencyapp.service;
 
+import com.nbp.currencyapp.converter.RateDTOtoCurrencyRate;
 import com.nbp.currencyapp.dataloader.NbpRestService;
+import com.nbp.currencyapp.dataloader.NbpTableType;
 import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.ExchangeDTO;
+import com.nbp.currencyapp.dto.RatesTableDTO;
 import com.nbp.currencyapp.repository.CurrencyRateRepository;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -18,9 +20,14 @@ import java.util.Optional;
 public class CurrencyService {
 
     private CurrencyRateRepository currencyRateRepository;
+    private RateDTOtoCurrencyRate rateDTOtoCurrencyRate;
+    private NbpRestService nbpRestService;
 
-    public CurrencyService(NbpRestService nbpRestService, CurrencyRateRepository currencyRateRepository) {
+    public CurrencyService(CurrencyRateRepository currencyRateRepository,
+                           RateDTOtoCurrencyRate rateDTOtoCurrencyRate, NbpRestService nbpRestService) {
         this.currencyRateRepository = currencyRateRepository;
+        this.rateDTOtoCurrencyRate = rateDTOtoCurrencyRate;
+        this.nbpRestService = nbpRestService;
     }
 
     public List<CurrencyRate> getAllCurrencyRates() {
@@ -31,7 +38,7 @@ public class CurrencyService {
     public ExchangeDTO convert(BigDecimal amount, String baseCurrencyCode, String targetCurrencyCode) {
 
         BigDecimal currencyValue = findCurrencyExchange(baseCurrencyCode)
-                .divide(findCurrencyExchange(targetCurrencyCode),4, RoundingMode.CEILING);
+                .divide(findCurrencyExchange(targetCurrencyCode), 4, RoundingMode.CEILING);
         BigDecimal convertedAmount = currencyValue.multiply(amount);
 
         return new ExchangeDTO(amount, baseCurrencyCode, targetCurrencyCode,
@@ -47,20 +54,30 @@ public class CurrencyService {
     }
 
 
-    private CurrencyRate findCurrencyIsoCode(CurrencyRate userCurrencyRate) {
-        Optional<CurrencyRate> currencyRateOptional = currencyRateRepository.findByCode(userCurrencyRate.getCode());
-        if (currencyRateOptional.isPresent()) {
-            return currencyRateOptional.get();
-        } else throw new NoSuchElementException();
+    public void saveOrUpdateData() {
+        List<RatesTableDTO> ratesTableDTOs = new ArrayList<>();
+        ratesTableDTOs.addAll(nbpRestService.loadExchangeRatesTable(NbpTableType.A));
+        ratesTableDTOs.addAll(nbpRestService.loadExchangeRatesTable(NbpTableType.B));
+
+        if (currencyRateRepository.findAll().isEmpty()) {
+            ratesTableDTOs.stream()
+                    .map(ratesTableDTO -> ratesTableDTO.getRates())
+                    .flatMap(List::stream)
+                    .map(rateDTOtoCurrencyRate::convert)
+                    .forEach(currencyRateRepository::save);
+        } else {
+            ratesTableDTOs.stream()
+                    .map(ratesTableDTO -> ratesTableDTO.getRates())
+                    .flatMap(List::stream)
+                    .map(rateDTOtoCurrencyRate::convert)
+                    .forEach(currencyRate -> {
+                        if (currencyRateRepository.findByCode(currencyRate.getCode()).isPresent()) {
+                            currencyRateRepository.updateExchange(currencyRate.getCode(), currencyRate.getExchange());
+                        } else
+                            currencyRateRepository.save(currencyRate);
+                    });
+
+        }
     }
-
-    public List<CurrencyRate> getUserRateList(List<CurrencyRate> userCurrencyList) {
-        List<CurrencyRate> resultList = new ArrayList<>();
-        userCurrencyList.forEach(currencyRate -> resultList.add(findCurrencyIsoCode(currencyRate)));
-        return resultList;
-    }
-
-
-
 }
 

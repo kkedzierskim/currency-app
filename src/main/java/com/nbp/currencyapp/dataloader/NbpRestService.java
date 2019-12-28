@@ -41,12 +41,9 @@ public class NbpRestService {
         loadExchangeRatesTable(NbpTableType.A);
     }
 
-    @Scheduled(fixedDelayString = "${updateRatesData.delay}")
-    private void scheduledUpdateOfCurrencyRates(){
-        loadExchangeRates();
-    }
 
-    private void loadExchangeRatesTable(NbpTableType nbpTableType) {
+
+    public List<RatesTableDTO> loadExchangeRatesTable(NbpTableType nbpTableType) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<List<RatesTableDTO>> rateResponse;
 
@@ -57,37 +54,9 @@ public class NbpRestService {
         } catch (RestClientException ex) {
             throw new IllegalStateException("NBP convert rates api unavailable");
         }
-
-        List<RateDTO> rateDTOs = new ArrayList<>();
-        List<RatesTableDTO> ratesTableDTOs = rateResponse.getBody();
-        if (!CollectionUtils.isEmpty(ratesTableDTOs)) {
-            rateDTOs.addAll(ratesTableDTOs.get(0).getRates());
-        }
-
-        if (currencyRateRepository.findAll().isEmpty()) {
-            initialSaveData(rateDTOs);
-        } else updateExchangeRatesData(rateDTOs);
-
         myHttpRequestService.saveRequest(URL + nbpTableType.toString(), LocalDateTime.now(), "GET");
-    }
-
-    private void initialSaveData(List<RateDTO> rateDTOs) {
-        rateDTOs.stream()
-                .map(rateDTOtoCurrencyRate::convert)
-                .forEach(currencyRateRepository::save);
-    }
-
-    void updateExchangeRatesData(List<RateDTO> rateDTOs) {
-        log.info("updating exchange rates");
-        rateDTOs.stream()
-                .map(rateDTOtoCurrencyRate::convert)
-                .forEach(currencyRate -> {
-                    if(currencyRateRepository.findByCode(currencyRate.getCode()).isPresent()) {
-                        currencyRateRepository.updateExchange(currencyRate.getCode(), currencyRate.getExchange());
-                    }
-                    else
-                        currencyRateRepository.save(currencyRate);
-                });
+        List<RatesTableDTO> ratesTableDTOs = rateResponse.getBody();
+        return ratesTableDTOs;
     }
 }
 
