@@ -3,7 +3,6 @@ package com.nbp.currencyapp.service;
 import com.nbp.currencyapp.dataloader.NbpRestService;
 import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.ExchangeDTO;
-import com.nbp.currencyapp.dto.RateDTO;
 import com.nbp.currencyapp.repository.CurrencyRateRepository;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +31,11 @@ public class CurrencyService {
     public ExchangeDTO convert(BigDecimal amount, String baseCurrencyCode, String targetCurrencyCode) {
 
         BigDecimal currencyValue = findCurrencyExchange(baseCurrencyCode)
-                .divide(findCurrencyExchange(targetCurrencyCode),2, RoundingMode.CEILING);
+                .divide(findCurrencyExchange(targetCurrencyCode),4, RoundingMode.CEILING);
         BigDecimal convertedAmount = currencyValue.multiply(amount);
 
         return new ExchangeDTO(amount, baseCurrencyCode, targetCurrencyCode,
-                convertedAmount.setScale(2, RoundingMode.CEILING));
+                convertedAmount.setScale(4, RoundingMode.CEILING));
     }
 
     private BigDecimal findCurrencyExchange(String currencyCode) {

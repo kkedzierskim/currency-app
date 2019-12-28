@@ -23,5 +23,8 @@ currently implemented features:
 documentation:
 http://localhost:8080/swagger-ui.html
 
-to run application on docker container:
-docker-compose up
+get all available currencies:
+curl -X GET "http://localhost:8080/currencies" -H "accept: */*"
+
+get exchange value:
+curl -X GET "http://localhost:8080/currency/convert?amount=167&baseCurrency=CZK&targetCurrency=JPY" -H "accept: */*"

@@ -1,6 +1,7 @@
 package com.nbp.currencyapp.dataloader;
 
 import com.nbp.currencyapp.converter.RateDTOtoCurrencyRate;
+import com.nbp.currencyapp.domain.CurrencyRate;
 import com.nbp.currencyapp.dto.RateDTO;
 import com.nbp.currencyapp.dto.RatesTableDTO;
 import com.nbp.currencyapp.repository.CurrencyRateRepository;
