@@ -24,7 +24,7 @@ public class CurrencyController {
     }
 
     @GetMapping("/currency/convert")
-    public ExchangeDTO exchangeGet(
+    public ExchangeDTO getExchange(
             @RequestParam(name = "amount") BigDecimal amount,
             @RequestParam(name = "baseCurrency") String baseCurrency,
             @RequestParam(name = "targetCurrency") String targetCurrency) {
