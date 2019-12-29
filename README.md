@@ -26,10 +26,10 @@ http://localhost:8080/swagger-ui.html
 get all available currencies:
 curl -X GET "http://localhost:8080/currencies" -H "accept: */*"
 
-
 get exchange value:
 curl -X GET "http://localhost:8080/currency/convert?amount=167&baseCurrency=CZK&targetCurrency=JPY" -H "accept: */*"
-JSON output:
+
+output:
 {
 amount: 167,
 baseCurrencyCode: "CZK",
