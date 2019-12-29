@@ -1,8 +1,6 @@
 package com.nbp.currencyapp.dataloader;
 
 import com.nbp.currencyapp.converter.RateDTOtoCurrencyRate;
-import com.nbp.currencyapp.domain.CurrencyRate;
-import com.nbp.currencyapp.dto.RateDTO;
 import com.nbp.currencyapp.dto.RatesTableDTO;
 import com.nbp.currencyapp.repository.CurrencyRateRepository;
 import com.nbp.currencyapp.service.MyHttpRequestService;
@@ -10,15 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -35,13 +29,6 @@ public class NbpRestService {
         this.rateDTOtoCurrencyRate = rateDTOtoCurrencyRate;
         this.currencyRateRepository = currencyRateRepository;
     }
-
-    @PostConstruct
-    public void loadExchangeRates() {
-        loadExchangeRatesTable(NbpTableType.A);
-    }
-
-
 
     public List<RatesTableDTO> loadExchangeRatesTable(NbpTableType nbpTableType) {
         RestTemplate restTemplate = new RestTemplate();

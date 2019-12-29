@@ -17,7 +17,7 @@ currently implemented features:
 - scheduled method updating data every 24h
 - saving every request at database
 - list of all available currencies and it's exchange rates
-- conversion based on the exchange rate for the following parameters: amount from which currency, to which currency
+- conversion based on the exchange rate for the following parameters: amount, from which currency, to which currency
 
 
 documentation:
@@ -26,5 +26,13 @@ http://localhost:8080/swagger-ui.html
 get all available currencies:
 curl -X GET "http://localhost:8080/currencies" -H "accept: */*"
 
+
 get exchange value:
 curl -X GET "http://localhost:8080/currency/convert?amount=167&baseCurrency=CZK&targetCurrency=JPY" -H "accept: */*"
+JSON output:
+{
+amount: 167,
+baseCurrencyCode: "CZK",
+targetCurrencyCode: "JPY",
+exchangeValue: 800.5479
+}
