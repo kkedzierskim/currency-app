@@ -20,7 +20,7 @@ class RateDTOtoCurrencyRateTest {
     }
 
     @Test
-    void convert() {
+    void convertTest() {
         //given
         RateDTO PLNrateDTO = new RateDTO("polski złoty", "PLN", BigDecimal.ONE);
         //when
