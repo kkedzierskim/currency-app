@@ -8,6 +8,8 @@ class RateAppApplicationTests {
 
     @Test
     void contextLoads() {
+
+
     }
 
 }
