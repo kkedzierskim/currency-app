@@ -1,8 +1,6 @@
 package com.nbp.currencyapp.dataloader;
 
-import com.nbp.currencyapp.converter.RateDTOtoCurrencyRate;
 import com.nbp.currencyapp.dto.RatesTableDTO;
-import com.nbp.currencyapp.repository.CurrencyRateRepository;
 import com.nbp.currencyapp.service.MyHttpRequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,14 +18,10 @@ import java.util.List;
 public class NbpRestService {
 
     private final MyHttpRequestService myHttpRequestService;
-    private final RateDTOtoCurrencyRate rateDTOtoCurrencyRate;
-    private final CurrencyRateRepository currencyRateRepository;
     private static final String URL = "http://api.nbp.pl/api/exchangerates/tables/";
 
-    public NbpRestService(MyHttpRequestService myHttpRequestService, RateDTOtoCurrencyRate rateDTOtoCurrencyRate, CurrencyRateRepository currencyRateRepository) {
+    public NbpRestService(MyHttpRequestService myHttpRequestService) {
         this.myHttpRequestService = myHttpRequestService;
-        this.rateDTOtoCurrencyRate = rateDTOtoCurrencyRate;
-        this.currencyRateRepository = currencyRateRepository;
     }
 
     public List<RatesTableDTO> loadExchangeRatesTable(NbpTableType nbpTableType) {
@@ -42,8 +36,8 @@ public class NbpRestService {
             throw new IllegalStateException("NBP convert rates api unavailable");
         }
         myHttpRequestService.saveRequest(URL + nbpTableType.toString(), LocalDateTime.now(), "GET");
-        List<RatesTableDTO> ratesTableDTOs = rateResponse.getBody();
-        return ratesTableDTOs;
+        return rateResponse.getBody();
+
     }
 }
 
